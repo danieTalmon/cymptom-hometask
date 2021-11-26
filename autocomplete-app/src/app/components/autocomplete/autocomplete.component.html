@@ -1,0 +1,14 @@
+<div
+  class="autocomplete-items"
+  *ngIf="productSuggestions.length > 0 && !isAutocompleteHidden">
+  <ng-container *ngFor="let productName of productSuggestions; let i = index">
+    <div
+      class="autocomplete-item"
+      tabindex="{{ i }}"
+      (keyup.enter)="addProductToCart(productName)"
+      (keydown)="onKeyDown($event, i)"
+      (click)="addProductToCart(productName)">
+      {{ productName }}
+    </div>
+  </ng-container>
+</div>

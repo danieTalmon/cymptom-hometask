@@ -1,0 +1,11 @@
+<table *ngIf="cartProducts" class="cart">
+  <ng-container *ngFor="let cartProduct of cartProducts; let i = index">
+    <tr>
+      <app-cart-product
+        class="cart-product"
+        [cartProduct]="cartProduct"
+        (deleteFromCart)="deleteProductFromCart(i)"
+      ></app-cart-product>
+    </tr>
+  </ng-container>
+</table>
