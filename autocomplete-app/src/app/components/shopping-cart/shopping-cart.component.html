@@ -1,0 +1,22 @@
+<div (click)="hideAutocomplete()">
+  <div class="shopping-cart">
+    <div class="autocomplete">
+      <input
+        class="search-bar"
+        (keyup)="onKeyUp($event)"
+        placeholder="enter search string"
+        (input)="onChangeSearch($event.target.value)"
+      />
+      <app-autocomplete
+        *ngIf="productsSuggestions$ | async as productSuggestions"
+        [productSuggestions]="productSuggestions"
+        [isAutocompleteHidden]="isAutocompleteHidden"
+        (addToCart)="addToCart($event)"
+      ></app-autocomplete>
+    </div>
+  </div>
+  <app-cart
+    [cartProducts]="cartProducts"
+    (deleteFromCart)="deleteFromCart($event)"
+  ></app-cart>
+</div>

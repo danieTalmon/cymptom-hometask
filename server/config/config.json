@@ -1,0 +1,18 @@
+{
+  "database": {
+    "host": "localhost",
+    "port": 27017,
+    "name": "amaromachServer",
+    "options": {
+      "useNewUrlParser": true,
+      "useUnifiedTopology": true,
+      "reconnectInterval": 6000
+    }
+  },
+  "logger": {
+    "filename": "C://logs"
+  },
+  "app": {
+    "port": 3000
+  }
+}

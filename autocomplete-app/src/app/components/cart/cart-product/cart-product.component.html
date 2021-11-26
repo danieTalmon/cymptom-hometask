@@ -1,0 +1,13 @@
+<td class="delete-item">
+    <img class="delete-item" (click)="deleteProductFromCart()" src="../../../../assets/icons8-delete.svg" alt="x-delete">
+</td>
+<td class="cart-col">
+    <img class="product-image" src="{{cartProduct.image}}" alt="{{cartProduct.name}}">
+</td>
+<td class="cart-col">
+    <h3>{{cartProduct.name}}</h3>
+</td>
+<td class="cart-col">
+    <h4>{{cartProduct.price | currency}}</h4>
+</td>
+
