@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# cymptom-hometask
-=======
 ![](assets/cymptom_logo_new.svg)
 &nbsp;
 
@@ -66,4 +63,3 @@ For example, if the user types the query "co", all the products matched for this
 
 *An example of the task*
 ![Suggested layout](assets/suggested_layout.png)
->>>>>>> origin
