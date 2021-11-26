@@ -2,7 +2,7 @@ import { Product, CartProduct } from './../models/product.model';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, of } from 'rxjs';
-import {catchError} from 'rxjs/operators'
+import {catchError} from 'rxjs/operators';
 
 @Injectable()
 export class ProductsService {
