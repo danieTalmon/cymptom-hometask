@@ -1,6 +1,18 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Observable, of, Subject } from 'rxjs';
-import { map, shareReplay, switchMap, take } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { fromEvent, Observable, of, Subject } from 'rxjs';
+import {
+  exhaustMap,
+  map,
+  scan,
+  shareReplay,
+  startWith,
+  switchMap,
+  take,
+  takeUntil,
+  takeWhile,
+  tap,
+  withLatestFrom,
+} from 'rxjs/operators';
 
 import { ProductsService } from '../../services/products.service';
 import { CartProduct, Product } from './../../models/product.model';
@@ -11,34 +23,45 @@ import { AutocompleteComponent } from './../autocomplete/autocomplete.component'
   templateUrl: './shopping-cart.component.html',
   styleUrls: ['./shopping-cart.component.less'],
 })
-
-export class ShoppingCartComponent implements OnInit {
+export class ShoppingCartComponent implements OnInit, OnDestroy {
   private searchStringSubject: Subject<string>;
+  private currentPage: number;
+  private destroy$: Subject<void>;
   products$: Observable<Product[]>;
   productsSuggestions$: Observable<string[]>;
   cartProducts: CartProduct[];
   currentProductActiveIndex: number;
   isAutocompleteHidden: boolean;
-  @ViewChild(AutocompleteComponent) autocompleteComponent: AutocompleteComponent;
+  @ViewChild(AutocompleteComponent)
+  autocompleteComponent: AutocompleteComponent;
+  nextPage$: Subject<void>;
 
   constructor(private productService: ProductsService) {
     this.searchStringSubject = new Subject<string>();
+    this.destroy$ = new Subject<void>();
     this.isAutocompleteHidden = true;
     this.cartProducts = [];
+    this.nextPage$ = new Subject<void>();
+    this.currentPage = 0;
   }
 
   ngOnInit(): void {
     this.products$ = this.searchStringSubject.asObservable().pipe(
-      switchMap((searchStr) =>
-        searchStr === ''
-          ? of([])
-          : this.productService.getProductsByFilter(searchStr)
-      ),
+      switchMap((searchStr) => {
+        this.currentPage = 1;
+        return this.getProductsFromServerHandler(searchStr);
+      }),
       shareReplay(1)
     );
+
     this.productsSuggestions$ = this.products$.pipe(
-      map((products) => products.map((product) => product.name))
+      map((products) => products.map((product) => product?.name))
     );
+
+  }
+
+  onScroll(): void {
+    this.nextPage$.next();
   }
 
   onChangeSearch(searchString: string): void {
@@ -47,7 +70,6 @@ export class ShoppingCartComponent implements OnInit {
   }
 
   onKeyUp(e: KeyboardEvent): void {
-    console.log(e.key);
     if (e.key === 'ArrowDown') {
       this.autocompleteComponent.focusFirstOption();
     }
@@ -69,11 +91,35 @@ export class ShoppingCartComponent implements OnInit {
     });
   }
 
-    deleteFromCart(index: number) {
-        this.cartProducts.splice(index, 1);
-    }
+  deleteFromCart(index: number): void {
+    this.cartProducts.splice(index, 1);
+  }
 
-    hideAutocomplete() {
-      this.isAutocompleteHidden = true;
-    }
+  hideAutocomplete(): void {
+    this.isAutocompleteHidden = true;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+  }
+
+  private getProductsFromServerHandler(searchStr: string): Observable<Product[]> {
+    return searchStr === ''
+          ? of([])
+          : this.nextPage$.pipe(
+              startWith(1),
+              exhaustMap((_) =>
+                this.getProductsByPage(searchStr, this.currentPage)
+              ),
+              tap(() => this.currentPage++),
+              takeWhile((newProducts) => newProducts.length > 0, true),
+              scan((currentProducts: Product[], newProducts: Product[]) =>
+                currentProducts.concat(newProducts)
+              )
+            );
+  }
+
+  private getProductsByPage(searchStr: string, page: number) {
+    return this.productService.getProductsByFilter(searchStr, page);
+  }
 }

@@ -1,8 +1,9 @@
-import { Product, CartProduct } from './../models/product.model';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, of } from 'rxjs';
-import {catchError} from 'rxjs/operators';
+import { of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
+import { Product } from './../models/product.model';
 
 @Injectable()
 export class ProductsService {
@@ -10,8 +11,8 @@ export class ProductsService {
 
   constructor(private http: HttpClient) {}
 
-  getProductsByFilter(searchStr: string) {
-    return this.http.get<Product[]>(this.baseURL + `?filter=${searchStr}`).pipe(
+  getProductsByFilter(searchStr: string, page: number) {
+    return this.http.get<Product[]>(this.baseURL + `?filter=${searchStr}&page=${page}`).pipe(
       catchError(err => {
         console.error('response error from products request: ', err);
         return of(null);

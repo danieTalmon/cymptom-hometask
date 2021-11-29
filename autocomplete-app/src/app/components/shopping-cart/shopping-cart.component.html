@@ -9,6 +9,7 @@
       />
       <app-autocomplete
         *ngIf="productsSuggestions$ | async as productSuggestions"
+        (nextPage)='onScroll()'
         [productSuggestions]="productSuggestions"
         [isAutocompleteHidden]="isAutocompleteHidden"
         (addToCart)="addToCart($event)"

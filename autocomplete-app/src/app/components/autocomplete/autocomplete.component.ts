@@ -15,8 +15,15 @@ export class AutocompleteComponent {
   @Output()
   addToCart: EventEmitter<string>;
 
+  @Output()
+  nextPage: EventEmitter<void>;
+
+  private readonly thresholdPercent: number;
+
   constructor() {
     this.addToCart = new EventEmitter<string>();
+    this.nextPage = new EventEmitter<void>();
+    this.thresholdPercent = 0.8;
   }
 
   addProductToCart(productName: string): void {
@@ -29,9 +36,16 @@ export class AutocompleteComponent {
     }
   }
 
-  onKeyDown(e: KeyboardEvent, index: number): void {
-    console.log('autocomplete', e.key);
+  onScroll(element: Element) {
+    const scrollThreshold =
+      (this.thresholdPercent * 100 * element.scrollHeight) / 100;
+    const currentScrollPosition = element.scrollTop + element.clientHeight;
+    if (currentScrollPosition > scrollThreshold) {
+      this.nextPage.emit();
+    }
+  }
 
+  onKeyDown(e: KeyboardEvent, index: number): void {
     if (e.key === 'ArrowDown' && index < this.productSuggestions.length - 1) {
       (
         document.getElementsByClassName('autocomplete-item')[index + 1] as any

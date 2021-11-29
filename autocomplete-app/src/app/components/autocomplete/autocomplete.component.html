@@ -1,7 +1,8 @@
 <div
   class="autocomplete-items"
-  *ngIf="productSuggestions.length > 0 && !isAutocompleteHidden">
-  <ng-container *ngFor="let productName of productSuggestions; let i = index">
+  *ngIf="productSuggestions.length > 0 && !isAutocompleteHidden"
+  (scroll)='onScroll($event.target)'>
+  <ng-container  *ngFor="let productName of productSuggestions; let i = index">
     <div
       class="autocomplete-item"
       tabindex="{{ i }}"
