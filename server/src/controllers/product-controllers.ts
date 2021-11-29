@@ -21,29 +21,6 @@ export const getProductsByFilter: (
         return productName?.match(filterRegex)?.length > 0;
       });
     res.json(searchSuggestions.slice(skip,skip + productsToken));
-  //   const jsonStream = StreamArray.withParser();
-  //   const filterRegex: RegExp = new RegExp(`.*${filter}.*`, 'g');
-
-  //   jsonStream.on('data', ( data: {key: number, value: Product} ) => {
-  //     const product: Product = data.value;
-  //     const productName: string = product.name;
-  //     if (productName?.match(filterRegex)?.length > 0) {
-  //        res.write(JSON.stringify(product));
-  //       }
-  // });
-
-  // jsonStream.on('error', (err) => {
-  //   console.error('error ocurred', err);
-  //   res.status(500).send('internal server error');
-  // });
-
-
-  // jsonStream.on('end', () => {
-  //   res.status(200).end();
-  // });
-
-  // fs.createReadStream(filePath).pipe(jsonStream.input);
-
   } else {
     res.status(400).send();
   }
